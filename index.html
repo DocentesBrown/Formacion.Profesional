@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Catálogo de Certificaciones FP</title>
+<title>Catálogo Provincial de Certificaciones FP</title>
 <style>
   :root{
     --bg:#f3efdc;
@@ -18,11 +18,20 @@
     background: var(--bg);
     color: var(--text);
     padding: 20px;
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
   }
   h1{
     text-align:center;
     color: var(--accent);
-    margin-bottom:10px;
+    margin-bottom:5px;
+  }
+  p.subtitle{
+    text-align:center;
+    margin-top:0;
+    margin-bottom:20px;
+    color: var(--text);
   }
   .filtros{
     display:flex;
@@ -31,7 +40,7 @@
     align-items:center;
     margin-bottom:20px;
   }
-  select, input{
+  select{
     padding:10px;
     font-size:16px;
     border-radius:8px;
@@ -42,6 +51,7 @@
     display:grid;
     grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
     gap:15px;
+    flex-grow:1;
   }
   .card{
     background: var(--card);
@@ -53,16 +63,31 @@
     margin-top:0;
     color: var(--primary);
   }
+  .btn-cafecito{
+    display:block;
+    margin:30px auto 0;
+    padding:12px 24px;
+    background: var(--primary);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+    cursor:pointer;
+    text-decoration:none;
+    text-align:center;
+  }
+  .btn-cafecito:hover{
+    background: var(--accent);
+  }
   @media (max-width:600px){
-    select, input{
-      width: 100%;
-    }
+    select{ width:100%; }
   }
 </style>
 </head>
 <body>
 
-<h1>Catálogo Jurisdiccional - Certificaciones FP</h1>
+<h1>Catálogo Provincial de Certificaciones de Formación Profesional</h1>
+<p class="subtitle">Creado por Docentes Brown – IG: @docentesbrown</p>
 
 <div class="filtros">
   <select id="filtroSelect">
@@ -71,6 +96,8 @@
 </div>
 
 <div id="cardsContainer"></div>
+
+<a class="btn-cafecito" href="https://cafecito.app/docentesbrown" target="_blank">Invitá un cafecito a Docentes Brown ☕</a>
 
 <script>
 const SHEET_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzs0rVa5DBTuCMXQOLSuT-CN6STm_X46ifpmgtwLWD_ceqhsUH7jQ-fBzXzq76iQ/pub?output=csv";
