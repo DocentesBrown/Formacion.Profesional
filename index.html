@@ -36,12 +36,17 @@
     color: var(--text);
     font-size:1rem;
   }
+  p.subtitle a{
+    color: var(--primary);
+    text-decoration:none;
+    font-weight:bold;
+  }
   .filtros{
     display:flex;
     flex-wrap:wrap;
     justify-content:center;
     gap:10px;
-    margin-bottom:20px;
+    margin-bottom:10px;
   }
   select{
     padding:12px;
@@ -55,6 +60,11 @@
     transition:0.2s;
   }
   select:hover{ background: var(--accent); }
+  #contador{
+    text-align:center;
+    margin:10px 0;
+    font-weight:bold;
+  }
   #cardsContainer{
     display:grid;
     grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
@@ -98,13 +108,15 @@
 <body>
 
 <h1>Catálogo Provincial de Certificaciones de Formación Profesional</h1>
-<p class="subtitle">Creado por Docentes Brown – IG: @docentesbrown</p>
+<p class="subtitle">Creado por Docentes Brown – IG: <a href="https://www.instagram.com/docentesbrown" target="_blank">@docentesbrown</a></p>
 
 <div class="filtros">
   <select id="filtroSelect">
     <option value="">-- Selecciona una opción --</option>
   </select>
 </div>
+
+<p id="contador"></p>
 
 <div id="cardsContainer"></div>
 
@@ -144,9 +156,11 @@ function llenarFiltro(){
     const valor = select.value;
     if(!valor){
       document.getElementById("cardsContainer").innerHTML = "";
+      document.getElementById("contador").textContent = "";
       return;
     }
     const filtrados = datos.filter(r=>r[0].trim() === valor);
+    document.getElementById("contador").textContent = `Se han encontrado ${filtrados.length} trayectos de formación.`;
     mostrarTarjetas(filtrados);
   });
 }
