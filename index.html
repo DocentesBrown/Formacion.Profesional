@@ -64,6 +64,8 @@
     text-align:center;
     margin:10px 0;
     font-weight:bold;
+    opacity:0;
+    transition: opacity 0.5s;
   }
   #cardsContainer{
     display:grid;
@@ -77,9 +79,14 @@
     border-radius:15px;
     box-shadow:0 4px 10px rgba(0,0,0,0.1);
     border-left: 6px solid var(--card-border);
-    transition: transform 0.2s;
+    transform: translateY(20px);
+    opacity:0;
+    transition: transform 0.5s, opacity 0.5s;
   }
-  .card:hover{ transform: translateY(-3px); }
+  .card.visible{
+    transform: translateY(0);
+    opacity:1;
+  }
   .card h3{
     margin-top:0;
     color: var(--primary);
@@ -154,13 +161,15 @@ function llenarFiltro(){
 
   select.addEventListener("change",()=>{
     const valor = select.value;
+    const contador = document.getElementById("contador");
     if(!valor){
       document.getElementById("cardsContainer").innerHTML = "";
-      document.getElementById("contador").textContent = "";
+      contador.style.opacity=0;
       return;
     }
     const filtrados = datos.filter(r=>r[0].trim() === valor);
-    document.getElementById("contador").textContent = `Se han encontrado ${filtrados.length} trayectos de formación.`;
+    contador.textContent = `Se han encontrado ${filtrados.length} trayectos de formación.`;
+    contador.style.opacity=1;
     mostrarTarjetas(filtrados);
   });
 }
@@ -174,12 +183,14 @@ function mostrarTarjetas(lista){
     return;
   }
 
-  lista.forEach(r=>{
+  lista.forEach((r,i)=>{
     const card = document.createElement("div");
     card.className="card";
     card.innerHTML = `<h3>${r[0]}</h3>` +
-      headers.slice(1).map((h,i)=>`<p><strong>${h}:</strong> ${r[i+1]||""}</p>`).join("");
+      headers.slice(1).map((h,j)=>`<p><strong>${h}:</strong> ${r[j+1]||""}</p>`).join("");
     container.appendChild(card);
+    // animación con delay escalonado
+    setTimeout(()=>card.classList.add("visible"), i*100);
   });
 }
 
