@@ -1,92 +1,137 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Catálogo de Certificaciones FP</title>
-  <style>
-    body { font-family: Arial, sans-serif; background:#f3f3f3; margin:0; padding:20px; }
-    h1 { text-align:center; color:#24496e; }
-    .filtros { display:flex; gap:10px; justify-content:center; margin:20px 0; flex-wrap:wrap; }
-    select, input { padding:8px; font-size:1rem; }
-    #cardsContainer { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:15px; }
-    .card { background:white; padding:15px; border-radius:10px; box-shadow:0 2px 6px rgba(0,0,0,0.15); }
-    .card h3 { margin-top:0; color:#4d3069; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo de Certificaciones FP</title>
+<style>
+  :root{
+    --bg:#f3efdc;
+    --text:#24496e;
+    --accent:#4d3069;
+    --primary:#3d8fb0;
+    --card:#fff;
+  }
+  body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 20px;
+  }
+  h1{
+    text-align:center;
+    color: var(--accent);
+    margin-bottom:10px;
+  }
+  .filtros{
+    display:flex;
+    flex-direction: column;
+    gap:10px;
+    align-items:center;
+    margin-bottom:20px;
+  }
+  select, input{
+    padding:10px;
+    font-size:16px;
+    border-radius:8px;
+    border:1px solid #ccc;
+    min-width:250px;
+  }
+  #cardsContainer{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+    gap:15px;
+  }
+  .card{
+    background: var(--card);
+    padding:15px;
+    border-radius:12px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+  }
+  .card h3{
+    margin-top:0;
+    color: var(--primary);
+  }
+  @media (max-width:600px){
+    select, input{
+      width: 100%;
+    }
+  }
+</style>
 </head>
 <body>
-  <h1>Catálogo Jurisdiccional - Certificaciones FP</h1>
 
-  <div class="filtros">
-    <select id="filtroSelect">
-      <option value="">-- Selecciona una opción --</option>
-    </select>
-    <input type="text" id="searchInput" placeholder="Buscar por texto...">
-  </div>
+<h1>Catálogo Jurisdiccional - Certificaciones FP</h1>
 
-  <div id="cardsContainer"></div>
+<div class="filtros">
+  <select id="filtroSelect">
+    <option value="">-- Selecciona una opción --</option>
+  </select>
+</div>
 
-  <script>
-    const SHEET_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzs0rVa5DBTuCMXQOLSuT-CN6STm_X46ifpmgtwLWD_ceqhsUH7jQ-fBzXzq76iQ/pub?output=csv";
-    let datos = [];
-    let headers = [];
+<div id="cardsContainer"></div>
 
-    async function cargarDatos() {
-      try {
-        const resp = await fetch(SHEET_CSV);
-        const texto = await resp.text();
-        const filas = texto.trim().split("\n").map(f => f.split(","));
-        headers = filas[0];
-        datos = filas.slice(1);
+<script>
+const SHEET_CSV = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQzs0rVa5DBTuCMXQOLSuT-CN6STm_X46ifpmgtwLWD_ceqhsUH7jQ-fBzXzq76iQ/pub?output=csv";
+let datos = [];
+let headers = [];
 
-        llenarFiltro();
-        mostrarTarjetas(datos);
-      } catch (e) {
-        document.getElementById("cardsContainer").innerHTML = `<p style="color:red;">Error al cargar datos: ${e}</p>`;
-        console.error(e);
-      }
+async function cargarDatos() {
+  try{
+    const resp = await fetch(SHEET_CSV);
+    const texto = await resp.text();
+    const filas = texto.trim().split("\n").map(f => f.split(","));
+    headers = filas[0];
+    datos = filas.slice(1);
+
+    llenarFiltro();
+  } catch(e){
+    document.getElementById("cardsContainer").innerHTML = `<p style="color:red;">Error al cargar datos: ${e}</p>`;
+    console.error(e);
+  }
+}
+
+function llenarFiltro(){
+  const select = document.getElementById("filtroSelect");
+  const opciones = [...new Set(datos.map(r => r[0].trim()).filter(Boolean))];
+  opciones.forEach(op=>{
+    const option = document.createElement("option");
+    option.value = op;
+    option.textContent = op;
+    select.appendChild(option);
+  });
+
+  select.addEventListener("change",()=>{
+    const valor = select.value;
+    if(!valor){
+      document.getElementById("cardsContainer").innerHTML = "";
+      return;
     }
+    const filtrados = datos.filter(r=>r[0].trim() === valor);
+    mostrarTarjetas(filtrados);
+  });
+}
 
-    function llenarFiltro() {
-      const select = document.getElementById("filtroSelect");
-      const opciones = [...new Set(datos.map(r => r[0].trim()).filter(Boolean))];
-      opciones.forEach(op => {
-        const option = document.createElement("option");
-        option.value = op;
-        option.textContent = op;
-        select.appendChild(option);
-      });
+function mostrarTarjetas(lista){
+  const container = document.getElementById("cardsContainer");
+  container.innerHTML = "";
 
-      select.addEventListener("change", () => mostrarTarjetas(datos));
-      document.getElementById("searchInput").addEventListener("input", () => mostrarTarjetas(datos));
-    }
+  if(lista.length===0){
+    container.innerHTML = "<p>No se encontraron resultados.</p>";
+    return;
+  }
 
-    function mostrarTarjetas(lista) {
-      const filtro = document.getElementById("filtroSelect").value.toLowerCase();
-      const texto = document.getElementById("searchInput").value.toLowerCase();
-      const container = document.getElementById("cardsContainer");
-      container.innerHTML = "";
+  lista.forEach(r=>{
+    const card = document.createElement("div");
+    card.className="card";
+    card.innerHTML = headers.map((h,i)=>`<p><strong>${h}:</strong> ${r[i]||""}</p>`).join("");
+    container.appendChild(card);
+  });
+}
 
-      const filtrados = lista.filter(r => {
-        const coincideFiltro = !filtro || r[0].toLowerCase() === filtro;
-        const coincideTexto = !texto || r.some(c => c.toLowerCase().includes(texto));
-        return coincideFiltro && coincideTexto;
-      });
+cargarDatos();
+</script>
 
-      if (filtrados.length === 0) {
-        container.innerHTML = "<p>No se encontraron resultados.</p>";
-        return;
-      }
-
-      filtrados.forEach(r => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = headers.map((h,i) => `<p><strong>${h}:</strong> ${r[i] || ""}</p>`).join("");
-        container.appendChild(card);
-      });
-    }
-
-    cargarDatos();
-  </script>
 </body>
 </html>
