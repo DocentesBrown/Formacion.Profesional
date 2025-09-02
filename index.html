@@ -11,13 +11,14 @@
     --accent:#4d3069;
     --primary:#3d8fb0;
     --card:#fff;
+    --card-border:#da6863;
   }
   body{
     margin:0;
     font-family: Arial, sans-serif;
     background: var(--bg);
     color: var(--text);
-    padding: 20px;
+    padding:20px;
     display:flex;
     flex-direction:column;
     min-height:100vh;
@@ -26,42 +27,53 @@
     text-align:center;
     color: var(--accent);
     margin-bottom:5px;
+    font-size:1.5rem;
   }
   p.subtitle{
     text-align:center;
     margin-top:0;
     margin-bottom:20px;
     color: var(--text);
+    font-size:1rem;
   }
   .filtros{
     display:flex;
-    flex-direction: column;
+    flex-wrap:wrap;
+    justify-content:center;
     gap:10px;
-    align-items:center;
     margin-bottom:20px;
   }
   select{
-    padding:10px;
+    padding:12px;
     font-size:16px;
-    border-radius:8px;
-    border:1px solid #ccc;
-    min-width:250px;
+    border-radius:12px;
+    border:none;
+    background: var(--primary);
+    color:#fff;
+    min-width:200px;
+    cursor:pointer;
+    transition:0.2s;
   }
+  select:hover{ background: var(--accent); }
   #cardsContainer{
     display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
     gap:15px;
     flex-grow:1;
   }
   .card{
     background: var(--card);
     padding:15px;
-    border-radius:12px;
-    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    border-radius:15px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    border-left: 6px solid var(--card-border);
+    transition: transform 0.2s;
   }
+  .card:hover{ transform: translateY(-3px); }
   .card h3{
     margin-top:0;
     color: var(--primary);
+    font-size:1.1rem;
   }
   .btn-cafecito{
     display:block;
@@ -70,15 +82,14 @@
     background: var(--primary);
     color:#fff;
     border:none;
-    border-radius:8px;
+    border-radius:12px;
     font-size:16px;
     cursor:pointer;
     text-decoration:none;
     text-align:center;
+    transition:0.2s;
   }
-  .btn-cafecito:hover{
-    background: var(--accent);
-  }
+  .btn-cafecito:hover{ background: var(--accent); }
   @media (max-width:600px){
     select{ width:100%; }
   }
@@ -152,7 +163,8 @@ function mostrarTarjetas(lista){
   lista.forEach(r=>{
     const card = document.createElement("div");
     card.className="card";
-    card.innerHTML = headers.map((h,i)=>`<p><strong>${h}:</strong> ${r[i]||""}</p>`).join("");
+    card.innerHTML = `<h3>${r[0]}</h3>` +
+      headers.slice(1).map((h,i)=>`<p><strong>${h}:</strong> ${r[i+1]||""}</p>`).join("");
     container.appendChild(card);
   });
 }
